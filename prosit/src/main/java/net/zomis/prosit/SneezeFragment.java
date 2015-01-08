@@ -65,10 +65,38 @@ public class SneezeFragment extends Fragment implements View.OnClickListener {
                 .setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        sendProsit(items[which]);
+                        if (which != items.length - 1) {
+                            sendProsit(items[which]);
+                            return;
+                        }
+
+                        LayoutInflater factory = LayoutInflater.from(getActivity());
+                        final View textEntryView = factory.inflate(R.layout.text_entry, null);
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Who should get the point?")
+                                .setView(textEntryView)
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        EditText name = (EditText) textEntryView.findViewById(R.id.edit_name);
+                                        addReceipient(name.getText().toString());
+                                        sendProsit(name.getText().toString());
+                                    }
+                                })
+                                .setNegativeButton(android.R.string.cancel, null).show();
                     }
                 })
                 .show();
+    }
+
+    private void addReceipient(String name) {
+        String competitors = prefs.getString("competitors", "");
+        if (competitors.isEmpty()) {
+            prefs.edit().putString("competitors", name).commit();
+        }
+        else {
+            prefs.edit().putString("competitors", competitors + "," + name).commit();
+        }
     }
 
     private boolean checkForName() {
@@ -78,7 +106,6 @@ public class SneezeFragment extends Fragment implements View.OnClickListener {
             LayoutInflater factory = LayoutInflater.from(getActivity());
             final View textEntryView = factory.inflate(R.layout.text_entry, null);
             new AlertDialog.Builder(getActivity())
-//                    .setIconAttribute(android.R.attr.alertDialogIcon)
                     .setTitle("Enter your name")
                     .setView(textEntryView)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -115,7 +142,6 @@ public class SneezeFragment extends Fragment implements View.OnClickListener {
             httpConnection.setRequestProperty("Accept-Charset", charset);
             httpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
             httpConnection.setRequestMethod("POST");
-//            httpConnection.connect();
 
             OutputStream output = httpConnection.getOutputStream();
             output.write(query.getBytes(charset));
