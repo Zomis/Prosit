@@ -2,7 +2,10 @@
 <resources>
 
     <string name="app_name">Prosit</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="sneeze_button">Prosit!</string>
     <string name="action_settings">Settings</string>
+    <string name="prosit_dialog_title">Prosit!</string>
+    <string name="prosit_dialog_message">Who gets the point?</string>
+    <string name="point_given" formatted="false">%s gets a point!</string>
 
 </resources>
