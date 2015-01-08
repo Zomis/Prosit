@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,6 +25,8 @@ import java.util.*;
  * Fragment containing a simple button.
  */
 public class SneezeFragment extends Fragment implements View.OnClickListener {
+
+    private static final String KEY_COMPETITORS = "competitors";
 
     private SharedPreferences prefs;
 
@@ -47,21 +48,18 @@ public class SneezeFragment extends Fragment implements View.OnClickListener {
             return;
         }
 
-        List<String> competitors = new ArrayList<String>(Arrays.asList(prefs.getString("competitors", "").split(",")));
+        List<String> competitors = new ArrayList<String>(Arrays.asList(prefs.getString(KEY_COMPETITORS, "").split(",")));
         if (!competitors.isEmpty() && competitors.get(0).isEmpty()) {
             competitors.remove(0);
         }
-        competitors.add("test");
-        competitors.add("test2");
         final String[] items = new String[competitors.size() + 1];
         for (int i = 0; i < competitors.size(); i++) {
             items[i] = competitors.get(i);
         }
         items[items.length - 1] = "(Other)";
 
-        AlertDialog builder = new AlertDialog.Builder(this.getActivity())
+        new AlertDialog.Builder(this.getActivity())
                 .setTitle(R.string.prosit_dialog_title)
-//                .setMessage(R.string.prosit_dialog_message)
                 .setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -90,12 +88,12 @@ public class SneezeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void addReceipient(String name) {
-        String competitors = prefs.getString("competitors", "");
+        String competitors = prefs.getString(KEY_COMPETITORS, "");
         if (competitors.isEmpty()) {
-            prefs.edit().putString("competitors", name).commit();
+            prefs.edit().putString(KEY_COMPETITORS, name).commit();
         }
         else {
-            prefs.edit().putString("competitors", competitors + "," + name).commit();
+            prefs.edit().putString(KEY_COMPETITORS, competitors + "," + name).commit();
         }
     }
 
@@ -138,7 +136,7 @@ public class SneezeFragment extends Fragment implements View.OnClickListener {
                     URLEncoder.encode(getMyName(), charset),
                     URLEncoder.encode(to, charset));
             httpConnection = (HttpURLConnection) new URL(url).openConnection();
-            httpConnection.setDoOutput(true); // Triggers POST.
+            httpConnection.setDoOutput(true);
             httpConnection.setRequestProperty("Accept-Charset", charset);
             httpConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded;charset=" + charset);
             httpConnection.setRequestMethod("POST");
